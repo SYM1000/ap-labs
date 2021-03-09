@@ -31,10 +31,6 @@ bool checkExtension(char line[1000]);
 struct Package *search(char key[1000]);
 
 
-
-
-
-//Strucs para la HT
 struct Package* hashArray[SIZE];
 struct Package* item;
 
@@ -46,7 +42,6 @@ int string_hashCode(char key[1000]) {
         hash = 31 * hash + key[i];
     }
 
-    //printf("hash result: %d\n", hash%SIZE);
     return hash % SIZE;
 }
 
@@ -59,7 +54,7 @@ int main(int argc, char **argv) {
 	printf("Input error.\nInput must follow the follow order: -input [input file].txt -report [output file]");
 	return 1;
     }else {
-        //make some validation for the input
+
         if (!checkExtension(argv[2])){
             printf("Input error.\nInput file must have '.txt' extension\n");
 	        return 1;
@@ -76,14 +71,12 @@ int main(int argc, char **argv) {
 void analizeLog(char *logFile, char *report) {
     printf("Generating Report from: [%s] log file\n", logFile);
 
-    // Implement your solution here.
-
-    //Read file test
+    //Read files
     FILE *inputFile;
     FILE *outputFile;
     
 
-    inputFile  = fopen(logFile, "r"); // read only 9
+    inputFile  = fopen(logFile, "r"); // read only
     outputFile = fopen(report, "w"); // write only
     
     // Validate the existance of the file
@@ -110,8 +103,7 @@ void analizeLog(char *logFile, char *report) {
 
     printf("\nReport is generated at: [%s]\n", report);
 
-
-    //Close all files after reading and writing
+    //Close all files
     fclose(inputFile);
     fclose(outputFile);
 }
@@ -120,7 +112,6 @@ void analizeLog(char *logFile, char *report) {
 //This method checks if the given sentence contains the given word.
 //Return 1 if word is founded.
 int checkIfLineContainsWord(char line[1000], char package[]){
-    //printf("%s" "%s", line);
     
     char sentence[1000];
     strcpy(sentence, line);
@@ -147,7 +138,6 @@ void createPackageFromLine(char line[1000], int *ScirptletCount, int *pacmanCoun
     int i = 1;
 
     //define variables for package
-    
     char Date[1000];
     char Time[1000];
     char manager[1000];
@@ -184,8 +174,8 @@ void createPackageFromLine(char line[1000], int *ScirptletCount, int *pacmanCoun
             }
 
         }else if (i == 4){
+            //This is not a package;
             if (  strcmp(word, "installed") != 0 && strcmp(word, "removed") != 0 && strcmp(word, "upgraded") != 0){
-                //printf("This is not a package\n");
                 isNotAPackage = true;
                 break;
             }
@@ -202,8 +192,7 @@ void createPackageFromLine(char line[1000], int *ScirptletCount, int *pacmanCoun
 
     strcpy(sentence, line); //hacer que no se borre la linea
 
-    //Check existance of package with a hashtable
-    //for testing now, we r going to create just a package an then use the HT
+
     if(isNotAPackage){
         return;
     }
@@ -218,16 +207,14 @@ void createPackageFromLine(char line[1000], int *ScirptletCount, int *pacmanCoun
     currentPackage.numberUpdtaes = 0;
     strcpy(currentPackage.removalDate, "");
 
-
     item = search(currentPackage.name);
 
-    //Logica de la ht
+
     //Checar si existe en la hashtable
    if(item != NULL) {
-      //printf("El paquete: %s existe en la ht\n", item->name);
       strcpy(item->status, currentPackage.status); //Actualziar el status del paquete
 
-        //Incremetnar el numero de updates
+        //increase number of updates
       if( strcmp(currentPackage.status, "upgraded") == 0 ){
           ++item->numberUpdtaes;
           strcpy(item->lastUpdate, currentPackage.Date);
@@ -239,35 +226,9 @@ void createPackageFromLine(char line[1000], int *ScirptletCount, int *pacmanCoun
       }
  
    } else {
-        //add( currentPackage.name, currentPackage.Date, currentPackage.InstallDate, currentPackage.lastUpdate, currentPackage.status, currentPackage.manager, currentPackage.numberUpdtaes, currentPackage.removalDate);
        insert( &currentPackage );
-       //printf("%s agregado a la HT\n", currentPackage.name);
    }
-
-
-    //actualizar datos o agregar un nuevo valor a la hashtable
-    // if (ht.contains(name)){
-
-    // }else {
-
-    // }
-
-
-
-    //Checar si no esta inicializado un valor
-    // if(currentPackage.removalDate[0] == '\0') {
-    //     printf("ESTA VACIO\n");
-    // }
-
-    /* print packager info */
-   
-   //printf( "Package name : %s\n", currentPackage.name);
-
-//    printf( "Package manager : %s\n", currentPackage.manager);
-//    printf( "Package status : %s\n", currentPackage.status);
-//    printf( "Package Date : %s\n", currentPackage.Date);
-//    printf( "Package Numer updates : %d\n", currentPackage.numberUpdtaes);
-//    printf( "Package removal Date : %s\n", currentPackage.removalDate);   
+  
 }
     
  void getPacmanPackagesReport(FILE *outputFile){
@@ -275,9 +236,7 @@ void createPackageFromLine(char line[1000], int *ScirptletCount, int *pacmanCoun
     int removedPackagesCount = 0;
     int upgradedPackgesCount = 0;
     int currentPackagesCount = 0;
-    //printf("\nPacman Packages Report\n");
     fprintf(outputFile, "Pacman Packages Report\n");
-    //printf("----------------------\n");
     fprintf(outputFile, "----------------------\n");
 
     for(int i = 0; i < SIZE; i++){
@@ -301,13 +260,6 @@ void createPackageFromLine(char line[1000], int *ScirptletCount, int *pacmanCoun
     }
     currentPackagesCount = installedPackagesCount - removedPackagesCount;
 
-
-
-    // printf("- Installed packages  : [%d]", installedPackagesCount);
-    // printf("\n- Removed packages    : [%d]", removedPackagesCount);
-    // printf("\n- Upgraded packages   : [%d]", upgradedPackgesCount);
-    // printf("\n- Current packages    : [%d]\n", currentPackagesCount);
-    // printf("----------------------\n");
     fprintf(outputFile,"- Installed packages  : [%d]", installedPackagesCount);
     fprintf(outputFile,"\n- Removed packages    : [%d]", removedPackagesCount);
     fprintf(outputFile,"\n- Upgraded packages   : [%d]", upgradedPackgesCount);
@@ -320,9 +272,7 @@ void createPackageFromLine(char line[1000], int *ScirptletCount, int *pacmanCoun
 void getGeneralStats(int sciptletCount, int pacmanCount,FILE *inputFile , FILE *outputFile){
     int alpmCount = 0;
 
-    //printf("General Stats\n");
     fprintf(outputFile, "General Stats\n");
-    //printf("----------------------\n");
     fprintf(outputFile, "----------------------\n");
 
     for(int i = 0; i < SIZE; i++){
@@ -336,15 +286,9 @@ void getGeneralStats(int sciptletCount, int pacmanCount,FILE *inputFile , FILE *
 
         if( strcmp(manager, "[ALPM]") == 0 ){
             ++alpmCount;
-
         }
-
     }
 
-
-    // printf("- Oldest package               : \n");
-    // printf("- Newest package               : \n");
-    // printf("- Package with no upgrades     : ");
     fprintf(outputFile, "- Oldest package               : ");
     getOldest(outputFile);
     fprintf(outputFile, "- Newest package               : ");
@@ -357,15 +301,10 @@ void getGeneralStats(int sciptletCount, int pacmanCount,FILE *inputFile , FILE *
 
 
         if( hashArray[i]->numberUpdtaes == 0 ){
-            //printf("%s, ", hashArray[i]->name);
             fprintf(outputFile, "%s, ", hashArray[i]->name);
         }
     }
-    // printf("\n");
-    // printf("- [ALPM-SCRIPTTLET] type count : %d",  sciptletCount);
-    // printf("\n- [ALPM] count                 : %d", alpmCount);
-    // printf("\n- [PACMAN] count               : %d", pacmanCount);
-    // printf("\n----------------------");
+
     fprintf(outputFile, "\n");
     fprintf(outputFile, "- [ALPM-SCRIPTTLET] type count : %d",  sciptletCount);
     fprintf(outputFile, "\n- [ALPM] count                 : %d", alpmCount);
@@ -375,8 +314,7 @@ void getGeneralStats(int sciptletCount, int pacmanCount,FILE *inputFile , FILE *
 }
 
 void printListOfPackages(FILE *outputFile){
-    // printf("\nList of packages\n");
-    // printf("----------------------\n");
+
     fprintf(outputFile, "\nList of packages\n");
     fprintf(outputFile, "----------------------\n");
     for(int i = 0; i < SIZE; i++){
@@ -385,11 +323,6 @@ void printListOfPackages(FILE *outputFile){
             continue;
         }
 
-        // printf("- Package Name           : %s\n", hashArray[i]->name );
-        // printf("    - Install date       : %s\n", hashArray[i]->InstallDate );
-        // printf("    - Last update date   : %s\n", hashArray[i]->lastUpdate );
-        // printf("    - How many updates   : %d\n", hashArray[i]->numberUpdtaes );
-        // printf("    - Removal date       : %s\n\n", hashArray[i]->removalDate );
         fprintf(outputFile, "- Package Name           : %s\n", hashArray[i]->name );
         fprintf(outputFile, "    - Install date       : %s\n", hashArray[i]->InstallDate );
         fprintf(outputFile, "    - Last update date   : %s\n", hashArray[i]->lastUpdate );
@@ -436,6 +369,9 @@ bool checkExtension(char line[1000]){
 
     return false;
 }
+
+
+
 // ------ Metodos de la HT --------
 
 void insert( struct Package *myPackage) {
@@ -451,37 +387,26 @@ void insert( struct Package *myPackage) {
 
    //get the hash 
    int hashIndex = string_hashCode(myPackage->name);
-   //printf("hashindes: %d", hashIndex);
 
    //move in array until an empty or deleted cell
    while(hashArray[hashIndex] != NULL) {
-      //go to next cell
       ++hashIndex;
-		
-      //wrap around the table
       hashIndex %= SIZE;
    }
 	
    hashArray[hashIndex] = item;
-   //printf("el paquete %s se ha puesto en la posicion %d\n", myPackage->name, hashIndex);
 }
 
 struct Package *search(char key[1000]) {
-    // Tha key is the name
-   //get the hash 
-   //int hashIndex = hashCode(key);  
+
    int hashIndex = string_hashCode(key);
 	
    //move in array until an empty 
    while(hashArray[hashIndex] != NULL) {
       if( strcmp(hashArray[hashIndex]->name, key) == 0){
           return hashArray[hashIndex]; 
-      }
-			
-      //go to next cell
+      }	
       ++hashIndex;
-		
-      //wrap around the table
       hashIndex %= SIZE;
    }        
 	
