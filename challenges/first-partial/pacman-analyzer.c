@@ -51,13 +51,13 @@ int string_hashCode(char key[1000]) {
 int main(int argc, char **argv) {
 
     if (argc != 5) {
-	printf("Input error.\nInput must follow the follow order: -input [input file].txt -report [output file]");
-	return 1;
+	printf("Input error.\nInput must follow the follow order: -input [input file].txt -report [output file]\n");
+	return 0;
     }else {
 
         if (!checkExtension(argv[2])){
             printf("Input error.\nInput file must have '.txt' extension\n");
-	        return 1;
+	        return 0;
         }
     }
 
