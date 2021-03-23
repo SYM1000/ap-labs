@@ -1,5 +1,3 @@
-
-
 int mystrlen(char *str){
     int count = 0;
     char * p;
@@ -52,7 +50,7 @@ int mystrfind(char *origin, char *substr){
         }else{
             subPos = 0;
             originPos++;   
-            
+
         }
 
         

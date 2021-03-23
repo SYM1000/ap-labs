@@ -7,6 +7,7 @@ int mystrlen(char *str);
 char *mystradd(char *origin, char *addition);
 int mystrfind(char *origin, char *substr);
 
+
 int main(int argc, char **argv) {
     if(strcmp(argv[1], "-add") == 0){
         if(argc != 4){
