@@ -7,20 +7,43 @@
 package main
 
 import (
+	"bufio"
+	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net"
 	"os"
 )
 
+var user = flag.String("user", "user0", "Username to use in chat")
+var server = flag.String("server", "localhost:8000", "Servet to connect")
+
 //!+
 func main() {
-	conn, err := net.Dial("tcp", "localhost:8000")
+	flag.Parse()
+
+	strUser := *user
+	strServer := *server
+
+	conn, err := net.Dial("tcp", strServer)
 	if err != nil {
 		log.Fatal(err)
 	}
 	done := make(chan struct{})
+
+	_, e := io.WriteString(conn, strUser+"\n")
+	if e != nil {
+		log.Fatal(err)
+	}
+
 	go func() {
+		input := bufio.NewScanner(conn)
+		for input.Scan() {
+			fmt.Print("\n" + input.Text())
+			fmt.Print("\n" + *user + " > ")
+		}
+
 		io.Copy(os.Stdout, conn) // NOTE: ignoring errors
 		log.Println("done")
 		done <- struct{}{} // signal the main goroutine
@@ -33,7 +56,17 @@ func main() {
 //!-
 
 func mustCopy(dst io.Writer, src io.Reader) {
-	if _, err := io.Copy(dst, src); err != nil {
-		log.Fatal(err)
+	output := bufio.NewScanner(src)
+	for output.Scan() {
+		if output.Text() == "" {
+			fmt.Print(*user + " > ")
+			continue
+		}
+		_, e := io.WriteString(dst, output.Text()+"\n")
+		if e != nil {
+			fmt.Printf("Connection closed\n")
+			return
+		}
+		fmt.Print(*user + " > ")
 	}
 }
