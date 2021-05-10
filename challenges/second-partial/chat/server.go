@@ -5,6 +5,7 @@
 //!+
 
 // Chat is a server that lets clients chat with each other.
+// Santiago Yeomans - A01251000
 package main
 
 import (
